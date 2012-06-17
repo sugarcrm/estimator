@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/application.css" rel="stylesheet">
+  </head>
+  <body>
+    <section id="sugarcrm" class="container">
+    </section>
+
+    <script type="text/html" id="template-sugarcrm">
+      <div class="row">
+        <div class="span12">
+          <div class="row">
+            <!-- Parameters -->
+            <div class="span8">
+              <div id="parameters"></div>
+            </div>
+            <!-- Calculations -->
+            <div class="span4">
+              <div id="calculations"></div>
+            </div>  
+          </div>
+
+          <div class="row">
+            <div class="span12">
+              <!-- Topology -->
+              <div id="topology"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </script>
+    <script type="text/html" id="template-parameters">
+    <div class="page-header">
+      <h2>Parameters</h2>
+    </div>
+
+    <div class="row">
+      <div class="span2">
+        <label class="text">Licensed Users</label>
+        <div class="input-append">
+          <input id="users" class="calculateable input-small" size="4" type="text" value=<%= users %>><span class="add-on"><i class="icon-user"></i></span>
+        </div>
+      </div>
+      <div class="span2">
+        <label class="text">Concurrency</label>
+        <div class="input-append">
+          <input id="concurrency" class="calculateable input-small" size="4" type="text" value=<%= concurrency %>><span class="add-on">%</span>
+        </div>
+      </div> 
+
+      <div class="span2">
+        <label class="text">Database Records</label>
+        <div class="input-append">
+          <input id="records" class="calculateable input-small" size="4" type="text" value=<%= records %>><span class="add-on"><i class="icon-folder-close"></i></span>
+        </div>
+      </div>
+
+      <div class="span2">
+        <label>Environment</label>
+        <select id="environment" class="calculateable input-small">
+          <%= environments %>
+        </select>
+      </div>
+      <div class="span2">
+        <label>Operating System</label>
+        <select id="operatingSystem" class="calculateable input-small">
+          <option>Linux</option>
+          <option>Windows</option>
+        </select>
+      </div>
+      <div class="span2">
+        <label>Web Server</label>
+        <select id="webServer" class="calculateable input-small">
+          <option>Apache</option>
+          <option>IIS</option>
+        </select>
+      </div>
+      <div class="span2">
+        <label>Database</label>
+        <select id="dbServer" class="calculateable input-small">
+          <option>MySQL</option>
+          <option>Microsoft</option>
+          <option>Oracle</option>
+          <option>DB2</option>
+        </select>
+      </div>
+      <div class="span2">
+        <label>PHP Version</label>
+        <select id="dbServer" class="calculateable input-small">
+          <option>5.2</option>
+          <option>5.3</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="span8">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Enabled</th>
+              <th>Solution</th>
+              <th>Web Requests / User</th>
+              <th>API Requests / User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input id="sfa" class="solutions calculateable" type="checkbox"></td>
+              <td>Sales Force Automation</td>
+              <td><span id="sfa_web_rps" class="web_rps">0.0333</span> req/sec</td>
+              <td><span id="sfa_api_rps" class="api_rps">0</span> req/sec</td>
+            </tr>
+            <tr>
+              <td><input id="call_center" class="solutions calculateable" type="checkbox" checked="true"></td>
+              <td>Call Center</td>
+              <td><span id="call_center_web_rps" class="web_rps">0.0333</span> req/sec</td>
+              <td><span id="call_center_api_rps" class="api_rps">0.2</span> req/sec</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </script>
+    <script type="text/html" id="template-calculations">
+      <div class="page-header">
+        <h2>Calculations</h2>                
+      </div>
+      <div class="row">
+        <div class="span2">
+          <label class="text">
+            <i class="icon-user"></i>
+            Concurrent Users
+          </label>
+          <p id="concurrentUsers"><%= concurrent_users %> users</p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            Requests / Second
+          </label>
+          <p id="reqsPerSec"><%= requests_per_second %> req/sec</p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            Peak Bandwidth (Mbps)
+          </label>
+          <p id="peakBandwidth"><%= peak_bandwidth %> Mb/sec</p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            Total Bandwidth (GB)
+          </label>
+          <p id="monthlyBandwidth"><%= monthly_bandwidth %> GB/month</p>
+        </div>
+
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            Web CPU (Ghz)
+          </label>
+          <p id="webCpu"><%= web_cpu %> GHz</p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            Web RAM (GB)
+          </label>
+          <p id="webCpu"><%= web_ram %> GB</p>
+        </div>
+      </div>
+    </script>
+    <script type="text/html" id="template-topology">
+      <div class="page-header">
+        <h2>Runtime Environment</h2>
+      </div>
+      <div id="servers"></div>
+    </script>
+    <!-- javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/vendor/jquery.js"></script>
+    <script src="assets/js/vendor/jquery-priceformat.js"></script>
+    <script src="assets/js/vendor/bootstrap.js"></script>
+    <script src="assets/js/vendor/underscore.js"></script>
+    <script src="assets/js/vendor/backbone.js"></script>
+    <script src="assets/js/vendor/backbone-localstorage.js"></script>
+    <script src="assets/js/sugarcrm.js"></script>
+    <script src="assets/js/models/environments.js"></script>
+    <script src="assets/js/models/parameters.js"></script>
+    <script src="assets/js/models/servers.js"></script>
+    <script src="assets/js/application.js"></script>
+    
+  </body>
+</html>
