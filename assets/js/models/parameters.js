@@ -5,8 +5,8 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       records:      1000000,
       concurrency:  50,
       environments: new SugarCRM.Collections.Environments([
-        { name: "On-Site", selected: false },
-        { name: "Amazon",  selected: true}
+        { name: "On-Site", selected: true  },
+        { name: "Amazon",  selected: false }
       ]),
       os:           "Linux",
       solutions:    {
@@ -25,6 +25,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   },
   updateCalculatedFields: function() {
     this.set('concurrent_users', this.concurrentUsers());
+    this.set('environment', this.environment());
     this.set('requests_per_second', this.requestsPerSecond());
     this.set('peak_bandwidth', this.peakBandwidth());
     this.set('monthly_bandwidth', this.monthlyBandwidth());
@@ -40,7 +41,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     return Math.round( u * c );
   },
   environment: function() {
-    _.find(this.get('environments'), function(o) { return o.selected == true });
+    return this.get('environments').selected().get('name');
   },
   // Returns total RPS
   requestsPerSecond: function() {
@@ -87,4 +88,17 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     ['concurrentUsers', ]
     return json;
   },
+  update: function(e) {
+    field = e.currentTarget.id;
+    value = e.currentTarget.value;
+    console.log(field + " changed to: " + value);
+    // Handle the environment drop down
+    if (field == "environment") {
+      this.get('environments').toggleSelected(name);
+    } else {
+      this.set(field, value);
+    }
+    window.lastEvent = e;
+    this.updateCalculatedFields();
+  }
 });
