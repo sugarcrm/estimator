@@ -9,10 +9,10 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
         { name: "Amazon",  selected: false }
       ]),
       os:           "Linux",
-      solutions:    {
-        sfa: { enabled: false, web: 0.0333, api: 0 },
-        call_center: { enabled: true, web: 0.0333, api: 0.2 }
-      },
+      solutions:    new SugarCRM.Collections.Solutions([
+        { id: "sfa", name: "Sales Force Automation", checked: false, web: 0.0333, api: 0 },
+        { id: "call_center", name: "Call Center", checked: true,  web: 0.0333, api: 0.2 }
+      ]),
       average_request_size: 50,  // Average request size in KB
       web_cpu_per_request: 0.5,  // Web CPU / Request in GHz
       web_ram_per_request: 278,  // Web RAM / Request in MB
@@ -52,7 +52,8 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   // Returns the RPS for a given usage vector (i.e. web or api)
   requestsPerSecondFor: function(vector) {
     // plucks and sums "web", or "api"
-    reqPerSec = _.reduce(_.values(this.get('solutions')), function(rps, s){ return rps + s[vector]; }, 0);
+    
+    reqPerSec = _.reduce(this.get('solutions').checked(), function(rps, s){ return rps + s.get(vector); }, 0);
     return (reqPerSec * this.concurrentUsers());
   },
   // Bandwidth used at peak concurrency in Megabits
@@ -85,7 +86,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     json  = this.toJSON();
     // Replace the environments part so we have a select instead
     json.environments = this.get('environments').toHTMLSelect();
-    ['concurrentUsers', ]
+    json.solution_matrix  = this.get('solutions').toHTML();
     return json;
   },
   update: function(e) {
@@ -95,6 +96,8 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     // Handle the environment drop down
     if (field == "environment") {
       this.get('environments').toggleSelected(name);
+    } else if (this.get('solutions').include) {
+      this.get('solutions').toggleChecked(field);
     } else {
       this.set(field, value);
     }

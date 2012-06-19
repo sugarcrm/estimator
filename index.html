@@ -111,18 +111,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><input id="sfa" class="solutions calculateable" type="checkbox"></td>
-              <td>Sales Force Automation</td>
-              <td><span id="sfa_web_rps" class="web_rps">0.0333</span> req/sec</td>
-              <td><span id="sfa_api_rps" class="api_rps">0</span> req/sec</td>
-            </tr>
-            <tr>
-              <td><input id="call_center" class="solutions calculateable" type="checkbox" checked="true"></td>
-              <td>Call Center</td>
-              <td><span id="call_center_web_rps" class="web_rps">0.0333</span> req/sec</td>
-              <td><span id="call_center_api_rps" class="api_rps">0.2</span> req/sec</td>
-            </tr>
+            <%= solution_matrix %>
           </tbody>
         </table>
       </div>
@@ -184,6 +173,14 @@
       </div>
       <div id="servers"></div>
     </script>
+    <script type="text/html" id="template-solution-row">
+      <tr>
+        <td><input id="<%= id %>" class="solutions calculateable" type="checkbox"></td>
+        <td><%= name %></td>
+        <td><span id="<%= id %>_web_rps" class="web_rps"><%= web %></span> req/sec</td>
+        <td><span id="<%= id %>_api_rps" class="api_rps"><%= api %></span> req/sec</td>
+      </tr>
+    </script>
     <!-- javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -195,6 +192,7 @@
     <script src="assets/js/vendor/backbone-localstorage.js"></script>
     <script src="assets/js/sugarcrm.js"></script>
     <script src="assets/js/models/environments.js"></script>
+    <script src="assets/js/models/solutions.js"></script>
     <script src="assets/js/models/parameters.js"></script>
     <script src="assets/js/models/servers.js"></script>
     <script src="assets/js/application.js"></script>

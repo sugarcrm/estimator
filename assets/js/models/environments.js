@@ -2,9 +2,11 @@ SugarCRM.Models.Environment = Backbone.Model.extend()
 
 SugarCRM.Collections.Environments = Backbone.Collection.extend({
   model: SugarCRM.Models.Environment,
+
   toHTMLSelect: function() {
+    template = _.template('<option value="<%= name %>"><%= name %></option>');
     return this.reduce(function(html, e) { 
-      return html + '<option value="' + e.get('name') + '">' +  e.get('name') + '</option>\n' }, ''
+      return html + template(e.toJSON()) }, ''
     );
   },
   selected: function() {
