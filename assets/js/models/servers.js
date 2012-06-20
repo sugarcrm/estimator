@@ -13,4 +13,13 @@ SugarCRM.Collections.Servers = Backbone.Collection.extend({
   environment: function() {
     return this.parameters.get("environment");
   },
+  toHTML: function() {
+    template = _.template($('#template-server-row').html());
+
+    return this.reduce(function(html, server) {
+      //console.log("Servers -> toHTML()");
+      //console.log(server.toJSON());
+      return html + template(server.toJSON());
+    }, '');
+  }
 })

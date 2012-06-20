@@ -16,13 +16,18 @@ SugarCRM.Collections.Solutions = Backbone.Collection.extend({
     e = this.find(function(e) { return e.get('id') == id } );
     if (e !== null && e) {
       if (e.get('checked')) {
+        console.log("Unchecking: " + id);
         e.set('checked', false);
       } else {
+        console.log("Checking: " + id);
         e.set('checked', true);
       }
       return true;
     } else {
       return false;
     }
+  },
+  included: function(id) {
+    return _.include(this.pluck('id'), id);
   }
 })

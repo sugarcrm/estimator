@@ -37,17 +37,11 @@ SugarCRM.Views.Topology = Backbone.View.extend({
   initialize: function() {
     this.parameters = this.options.parameters;
   },
-  webServers: function() {
-    servers  = this.parameters.webServers();
-    template = _.template($('#template-server-row').html());
-    return servers.reduce(function(html, server){
-      return html + template(server.toJSON());
-    }, '');
-  },
   render: function() {
+    console.log("Rendering Servers");
     // Compile the template
-    servers = { web_servers: this.webServers() };
-    html = this.template(servers);
+    servers = { web_servers: this.parameters.get('web_servers').toHTML() };
+    html    = this.template(servers);
     // Swap in the template
     $(this.el).html(html);
   }
@@ -57,13 +51,13 @@ SugarCRM.Views.SugarCRM = Backbone.View.extend({
   el: $('#sugarcrm'),
   template: _.template($('#template-sugarcrm').html()),
   events: {
-    "change .calculateable" : "updateParameters",
+    "change .calculateable" : "update",
   },
   initialize: function() {    
     this.parameters     = new SugarCRM.Models.Parameters;
     this.parameters.bind('change', this.render, this);
   },
-  updateParameters: function(e) {
+  update: function(e) {
     this.parameters.update(e);
   },
   render: function() {
@@ -72,6 +66,7 @@ SugarCRM.Views.SugarCRM = Backbone.View.extend({
     this.calculatorView = new SugarCRM.Views.Calculator({ parameters: this.parameters, el: this.$('#calculations') });
     this.topologyView   = new SugarCRM.Views.Topology({   parameters: this.parameters, el: this.$('#topology')     });
 
+    console.log("Calling Render!");
     this.parametersView.render();
     this.calculatorView.render();
     this.topologyView.render();

@@ -28,10 +28,11 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
           server_types: new SugarCRM.Collections.Servers([
             { make: "Amazon", 
               model: "m1.small",
-              cpu: { core: 1, clock: 1.2 }, ram: 1.7,
+              cpu: { cores: 1, clock: 1.2 }, ram: 1.7,
               storage: [
                 { size: 160, iops: 50, quantity: 1 },
               ],
+              price: 0.50,
             }
           ]),
         }
@@ -42,7 +43,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       ]),
       solutions:    new SugarCRM.Collections.Solutions([
         { id: "sfa", name: "Sales Force Automation", checked: false, web: 0.0333, api: 0 },
-        { id: "call_center", name: "Call Center", checked: true,  web: 0.0333, api: 0.2 }
+        { id: "call_center", name: "Call Center",    checked: true,  web: 0.0333, api: 0.2 }
       ]),
       average_request_size: 50,  // Average request size in KB
       web_cpu_per_request: 0.5,  // Web CPU / Request in GHz
@@ -56,15 +57,17 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.updateCalculatedFields();
   },
   updateCalculatedFields: function() {
-    this.set('concurrent_users', this.concurrentUsers());
-    this.set('environment', this.environment());
-    this.set('requests_per_second', this.requestsPerSecond());
-    this.set('peak_bandwidth', this.peakBandwidth());
-    this.set('monthly_bandwidth', this.monthlyBandwidth());
-    this.set('web_cpu', this.webCpu());
-    this.set('web_ram', this.webRam());
-    this.set('db_cpu', this.dbCpu());
-    this.set('db_ram', this.dbRam());
+    this.set('concurrent_users', this.concurrentUsers(), {silent: true});
+    this.set('environment', this.environment(), {silent: true});
+    this.set('requests_per_second', this.requestsPerSecond(), {silent: true});
+    this.set('peak_bandwidth', this.peakBandwidth(), {silent: true});
+    this.set('monthly_bandwidth', this.monthlyBandwidth(), {silent: true});
+    this.set('web_cpu', this.webCpu(), {silent: true});
+    this.set('web_ram', this.webRam(), {silent: true});
+    this.set('db_cpu', this.dbCpu(), {silent: true});
+    this.set('db_ram', this.dbRam(), {silent: true});
+    this.set('server_types', this.serverTypes(), {silent: true});
+    this.set('web_servers', this.webServers(), {silent: true});
   },
   // Returns concurrent users
   concurrentUsers: function() {
@@ -116,9 +119,9 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     return this.environment().get('server_types');
   },
   webServers: function() {
-    servers     = new SugarCRM.Collections.Servers();
-    server_type = this.serverTypes().first();
-    total_cpu   = this.webCpu();
+    servers     = new SugarCRM.Collections.Servers;
+    server_type = this.get('server_types').first();
+    total_cpu   = this.get('web_cpu');
     server_cpu  = server_type.cpu_capacity() * 0.7;
     total_servers = total_cpu / server_cpu;
     while (servers.size() <= total_servers) {
@@ -126,13 +129,16 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       server.set('name', "web-" + servers.size());
       servers.add(server);
     }
+    console.log("Parameters -> webServers");
+    console.log("Servers: " + servers.size());
+    //console.log(servers);
     return servers;
   },
   toTemplate: function() {
     // Turn everything into JSON
     json  = this.toJSON();
     // Replace the environments part so we have a select instead
-    json.environments = this.get('environments').toHTMLSelect();
+    json.environments     = this.get('environments').toHTMLSelect();
     json.solution_matrix  = this.get('solutions').toHTML();
     return json;
   },
@@ -142,13 +148,16 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     console.log(field + " changed to: " + value);
     // Handle the environment drop down
     if (field == "environment") {
-      this.get('environments').toggleSelected(name);
-    } else if (this.get('solutions').include) {
+      console.log("Toggling environment");
+      this.get('environments').toggleSelected(value);
+    } else if (this.get('solutions').included(field)) {
+      console.log("Toggling solutions");
       this.get('solutions').toggleChecked(field);
     } else {
       this.set(field, value);
     }
     window.lastEvent = e;
     this.updateCalculatedFields();
+    this.change();
   }
 });
