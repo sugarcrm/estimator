@@ -3,17 +3,20 @@ SugarCRM.Views.Parameters = Backbone.View.extend({
   initialize: function() {
     this.parameters = this.options.parameters;
   },
+  updateFields: function() {
+    // Update the selected drop down
+    $('#environment').val(this.parameters.environment().get('name'));
+    _.each(this.parameters.get('solutions').checked(), function(s){
+      $('#'+s.get('id')).prop('checked', s.get('checked'));
+    });
+  },
   render: function() {
     // Compile the template
     html = this.template(this.parameters.toTemplate());
     // Swap in the template
     $(this.el).html(html);
-    // Update the selected drop down
-    $('#environment').val(this.parameters.environment());
-    _.each(this.parameters.get('solutions').checked(), function(s){
-      $('#'+s.get('id')).prop('checked', s.get('checked'));
-    });
-  }
+    this.updateFields();
+  },
 })
 
 SugarCRM.Views.Calculator = Backbone.View.extend({
@@ -34,9 +37,17 @@ SugarCRM.Views.Topology = Backbone.View.extend({
   initialize: function() {
     this.parameters = this.options.parameters;
   },
+  webServers: function() {
+    servers  = this.parameters.webServers();
+    template = _.template($('#template-server-row').html());
+    return servers.reduce(function(html, server){
+      return html + template(server.toJSON());
+    }, '');
+  },
   render: function() {
     // Compile the template
-    html = this.template({});
+    servers = { web_servers: this.webServers() };
+    html = this.template(servers);
     // Swap in the template
     $(this.el).html(html);
   }

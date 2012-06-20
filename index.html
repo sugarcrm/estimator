@@ -150,7 +150,6 @@
           </label>
           <p id="monthlyBandwidth"><%= monthly_bandwidth %> GB/month</p>
         </div>
-
         <div class="span2">
           <label class="text">
             <i class="icon-comment"></i>
@@ -163,15 +162,46 @@
             <i class="icon-comment"></i>
             Web RAM (GB)
           </label>
-          <p id="webCpu"><%= web_ram %> GB</p>
+          <p id="webRam"><%= web_ram %> GB</p>
         </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            DB CPU (Ghz)
+          </label>
+          <p id="dbCpu"><%= db_cpu %> GHz</p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            <i class="icon-comment"></i>
+            DB RAM (GB)
+          </label>
+          <p id="dbRam"><%= db_ram %> GB</p>
+        </div>
+
       </div>
     </script>
     <script type="text/html" id="template-topology">
       <div class="page-header">
         <h2>Runtime Environment</h2>
       </div>
-      <div id="servers"></div>
+      <div id="web-servers">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Make/Model</th>
+              <th>CPU</th>
+              <th>RAM</th>
+              <th>Storage</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= web_servers %>
+          </tbody>
+        </table>
+      </div>
     </script>
     <script type="text/html" id="template-solution-row">
       <tr>
@@ -179,6 +209,16 @@
         <td><%= name %></td>
         <td><span id="<%= id %>_web_rps" class="web_rps"><%= web %></span> req/sec</td>
         <td><span id="<%= id %>_api_rps" class="api_rps"><%= api %></span> req/sec</td>
+      </tr>
+    </script>
+    <script type="text/html" id="template-server-row">
+      <tr>
+        <td><%= name %></td>
+        <td><%= make + " " + model %></td>
+        <td><%= cpu.cores + " x " + cpu.clock %></td>
+        <td><%= ram %></td>
+        <td></td>
+        <td><%= price %></td>
       </tr>
     </script>
     <!-- javascript
@@ -191,6 +231,7 @@
     <script src="assets/js/vendor/backbone.js"></script>
     <script src="assets/js/vendor/backbone-localstorage.js"></script>
     <script src="assets/js/sugarcrm.js"></script>
+    <script src="assets/js/models/operating_systems.js"></script>
     <script src="assets/js/models/environments.js"></script>
     <script src="assets/js/models/solutions.js"></script>
     <script src="assets/js/models/parameters.js"></script>
