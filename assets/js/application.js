@@ -38,7 +38,7 @@ SugarCRM.Views.Topology = Backbone.View.extend({
     this.parameters = this.options.parameters;
   },
   render: function() {
-    console.log("Rendering Servers");
+    //console.log("Rendering Servers");
     // Compile the template
     servers = { web_servers: this.parameters.get('web_servers').toHTML() };
     html    = this.template(servers);
@@ -73,10 +73,5 @@ SugarCRM.Views.SugarCRM = Backbone.View.extend({
   },
 })
 
-
 var App = new SugarCRM.Views.SugarCRM;
 App.render();
-
-//var ServersView   = new SugarCRM.Views.Servers;
-//ServersView.render();
-

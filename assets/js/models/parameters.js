@@ -46,6 +46,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
         { id: "call_center", name: "Call Center",    checked: true,  web: 0.0333, api: 0.2 }
       ]),
       average_request_size: 50,  // Average request size in KB
+      average_record_size: 50,   // Average record size in KB
       web_cpu_per_request: 0.5,  // Web CPU / Request in GHz
       web_ram_per_request: 278,  // Web RAM / Request in MB
       db_cpu_per_request: 0.4,   // DB CPU / Request in GHz
@@ -66,6 +67,8 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.set('web_ram', this.webRam(), {silent: true});
     this.set('db_cpu', this.dbCpu(), {silent: true});
     this.set('db_ram', this.dbRam(), {silent: true});
+    this.set('db_size', this.dbSize(), {silent: true});
+    this.set('db_buffer_pool', this.dbBufferPool(), {silent: true});
     this.set('server_types', this.serverTypes(), {silent: true});
     this.set('web_servers', this.webServers(), {silent: true});
   },
@@ -115,6 +118,15 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   dbRam: function() {
     return ((this.requestsPerSecond() * this.get('db_ram_per_request')) / 1024).toFixed(2);
   },
+  // Database Size in GB
+  dbSize: function() {
+    return ((this.get('average_record_size') * this.get('records') / 1024 / 1024)).toFixed(2);
+  },
+  // Database Buffer Pool Size in GB
+  dbBufferPool: function() {
+    dbSize = parseFloat(this.dbSize());
+    return (dbSize + (dbSize * 0.2)).toFixed(2);
+  },
   serverTypes: function() {
     return this.environment().get('server_types');
   },
@@ -129,10 +141,13 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       server.set('name', "web-" + servers.size());
       servers.add(server);
     }
-    console.log("Parameters -> webServers");
-    console.log("Servers: " + servers.size());
+    //console.log("Parameters -> webServers");
+    //console.log("Servers: " + servers.size());
     //console.log(servers);
     return servers;
+  },
+  dbServers: function() {
+    
   },
   toTemplate: function() {
     // Turn everything into JSON
@@ -154,7 +169,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       console.log("Toggling solutions");
       this.get('solutions').toggleChecked(field);
     } else {
-      this.set(field, value);
+      this.set(field, value, {silent: true});
     }
     window.lastEvent = e;
     this.updateCalculatedFields();

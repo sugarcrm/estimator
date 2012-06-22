@@ -124,61 +124,96 @@
       <div class="row">
         <div class="span2">
           <label class="text">
-            <i class="icon-user"></i>
             Concurrent Users
           </label>
-          <p id="concurrentUsers"><%= concurrent_users %> users</p>
+          <p id="concurrentUsers" class="calculation">
+            <i class="icon-user"></i>
+            <%= concurrent_users %> users
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            Requests / Second
+            Throughput
           </label>
-          <p id="reqsPerSec"><%= requests_per_second %> req/sec</p>
+          <p id="reqsPerSec" class="calculation">
+            <i class="icon-comment"></i>
+            <%= requests_per_second %> req/sec
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            Peak Bandwidth (Mbps)
+            Peak Bandwidth
           </label>
-          <p id="peakBandwidth"><%= peak_bandwidth %> Mb/sec</p>
+          <p id="peakBandwidth" class="calculation">
+            <i class="icon-signal"></i>
+            <%= peak_bandwidth %> Mb/sec
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            Total Bandwidth (GB)
+            Total Bandwidth
           </label>
-          <p id="monthlyBandwidth"><%= monthly_bandwidth %> GB/month</p>
+          <p id="monthlyBandwidth" class="calculation">
+            <i class="icon-signal"></i>
+            <%= monthly_bandwidth %> GB/month
+          </p>
+        </div>
+        
+        <hr />
+        <div class="span2">
+          <label class="text">
+            Web CPU
+          </label>
+          <p id="webCpu" class="calculation">
+            <i class="icon-hdd"></i>
+            <%= web_cpu %> GHz
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            Web CPU (Ghz)
+            Web RAM
           </label>
-          <p id="webCpu"><%= web_cpu %> GHz</p>
+          <p id="webRam" class="calculation">
+            <i class="icon-file"></i>
+            <%= web_ram %> GB
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            Web RAM (GB)
+            DB CPU
           </label>
-          <p id="webRam"><%= web_ram %> GB</p>
+          <p id="dbCpu" class="calculation">
+            <i class="icon-hdd"></i>
+            <%= db_cpu %> GHz
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            DB CPU (Ghz)
+            DB RAM
           </label>
-          <p id="dbCpu"><%= db_cpu %> GHz</p>
+          <p id="dbRam" class="calculation">
+            <i class="icon-file"></i>
+            <%= db_ram %> GB
+          </p>
         </div>
         <div class="span2">
           <label class="text">
-            <i class="icon-comment"></i>
-            DB RAM (GB)
+            DB Size
           </label>
-          <p id="dbRam"><%= db_ram %> GB</p>
+          <p id="dbSize" class="calculation">
+            <i class="icon-briefcase"></i>
+            <%= db_size %> GB
+          </p>
         </div>
-
+        <div class="span2">
+          <label class="text">
+            DB Buffer Pool Size
+          </label>
+          <p id="dbBufferPool" class="calculation">
+            <i class="icon-tasks"></i>
+            <%= db_buffer_pool %> GB
+          </p>
+        </div>
       </div>
     </script>
     <script type="text/html" id="template-topology">
@@ -186,7 +221,7 @@
         <h2>Runtime Environment</h2>
       </div>
       <div id="web-servers">
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped table-bordered">
           <thead>
             <tr>
               <th>Name</th>
