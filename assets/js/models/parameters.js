@@ -42,8 +42,27 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
         { name: "Windows", selected: false } 
       ]),
       solutions:    new SugarCRM.Collections.Solutions([
-        { id: "sfa", name: "Sales Force Automation", checked: false, web: 0.0333, api: 0 },
-        { id: "call_center", name: "Call Center",    checked: true,  web: 0.0333, api: 0.2 }
+        { id: "sfa", 
+          name: "Sales Force Automation", 
+          checked: false, 
+          web: 0.0333, 
+          api: 0,
+          db: { read: 5, write: 1 },   
+        },
+        { id: "call_center", 
+          name: "Call Center",
+          checked: true,  
+          web: 0.0333, 
+          api: 0.2,
+          db: { read: 2, write: 1 },
+        },
+        { id: "marketing",
+          name: "Marketing Automation",
+          checked: false,
+          web: 0.0333,
+          api: 0.02,
+          db: { read: 1, write: 3 },
+        }
       ]),
       average_request_size: 50,  // Average request size in KB
       average_record_size: 50,   // Average record size in KB

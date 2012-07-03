@@ -108,6 +108,7 @@
               <th>Solution</th>
               <th>Web Requests / User</th>
               <th>API Requests / User</th>
+              <th>DB Read/Write</th>
             </tr>
           </thead>
           <tbody>
@@ -244,6 +245,7 @@
         <td><%= name %></td>
         <td><span id="<%= id %>_web_rps" class="web_rps"><%= web %></span> req/sec</td>
         <td><span id="<%= id %>_api_rps" class="api_rps"><%= api %></span> req/sec</td>
+        <td><span id="<%= id %>_db_rw"   class="db_rw"><%= db.read %>:<%= db.write %></span> r/w ratio</td>
       </tr>
     </script>
     <script type="text/html" id="template-server-row">
