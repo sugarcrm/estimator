@@ -102,7 +102,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   // Peak DB RAM in Gigabytes
   dbRam: function() {
     // TODO: revisit this calculation - it's wrong.
-    return ((this.requestsPerSecond() * this.get('db_ram_per_request')) / 1024).toFixed(2);
+    return this.dbBufferPool();
   },
   dbRamIncrements: function() {
     rams = Math.ceil(this.dbRam() / 32);
