@@ -1,9 +1,8 @@
 SugarCRM.Models.Parameters = Backbone.Model.extend({
   defaults: function() {
     return {
-      users:        1000,
+      concurrentUsers:  500,
       records:      1000000,
-      concurrency:  50,
       environments: new SugarCRM.Collections.Environments(),
       operating_systems: new SugarCRM.Collections.OperatingSystems(),
       solutions:    new SugarCRM.Collections.Solutions(),
@@ -11,8 +10,12 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       average_record_size: 25,   // Average record size in KB
       web_cpu_per_request: 0.5,  // Web CPU / Request in GHz
       web_ram_per_request: 278,  // Web RAM / Request in MB
+      web_iops_per_request: 1,
+      web_io_cache_hit_rate: 0.99,
       db_cpu_per_request: 0.4,   // DB CPU / Request in GHz
       db_ram_per_request: 384,   // Web RAM / Request in MB
+      db_iops_per_request: 6,
+      iops_per_disk_pair: 105,
       resource_threshold: 0.7,   // The percentage of a resource that can be allocated.
     };
   },
@@ -25,8 +28,14 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.set('requests_per_second', this.requestsPerSecond(), {silent: true});
     this.set('peak_bandwidth', this.peakBandwidth(), {silent: true});
     this.set('monthly_bandwidth', this.monthlyBandwidth(), {silent: true});
+
     this.set('web_cpu', this.webCpu(), {silent: true});
     this.set('web_ram', this.webRam(), {silent: true});
+    this.set('web_iops', this.webIops(), {silent: true});
+    this.set('web_disks', this.webDisks(), {silent: true});
+    this.set('web_servers', this.webServers().toJSON(), {silent: true});
+    this.set('web_server_type', this.webServerType, {silent: true});
+    
     this.set('db_cpu', this.dbCpu(), {silent: true});
     this.set('db_ram', this.dbRam(), {silent: true});
     this.set('db_size', this.dbSize(), {silent: true});
@@ -35,23 +44,24 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.set('db_buffer_pool', this.dbBufferPool(), {silent: true});
     this.set('db_reads_per_request', this.dbReadsPerRequest(), {silent: true});
     this.set('db_writes_per_request', this.dbWritesPerRequest(), {silent: true}); 
+    this.set('db_servers', this.dbServers().toJSON(), {silent: true});
+    this.set('db_server_type', this.dbServerType(), {silent: true});
+
     this.set('server_types', this.serverTypes(), {silent: true});
-    this.set('web_servers', this.webServers(), {silent: true});
   },
   // Returns concurrent users
   concurrentUsers: function() {
-    u = this.get('users');
-    c = this.get('concurrency') / 100;
-    return Math.round( u * c );
+    return this.get('concurrentUsers');
   },
   environment: function() {
     return this.get('environments').selected();
   },
   // Returns total RPS
   requestsPerSecond: function() {
-    web_rps     = this.requestsPerSecondFor('web');
-    api_rps     = this.requestsPerSecondFor('api');
-    return Math.round(web_rps + api_rps);
+    //web_rps     = this.requestsPerSecondFor('web');
+    //api_rps     = this.requestsPerSecondFor('api');
+    //return Math.round(web_rps + api_rps);
+    return (this.concurrentUsers() * 0.08).toFixed(2);
   },
   // Returns the RPS for a given usage vector (i.e. web or api)
   requestsPerSecondFor: function(vector) {
@@ -76,6 +86,13 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   webRam: function() {
     return ((this.requestsPerSecond() * this.get('web_ram_per_request')) / 1024).toFixed(2);
   },
+  webIops: function() {
+    return (this.requestsPerSecond() * this.get('web_iops_per_request')).toFixed(2);
+  }, 
+  webDisks: function() {
+    disk_pairs = Math.ceil(this.webIops() / this.get('iops_per_disk_pair'));
+    return disk_pairs * 2;
+  },
   // Peak DB CPU in Gigahertz
   dbCpu: function() {
     return (this.requestsPerSecond() * this.get('db_cpu_per_request')).toFixed(2);
@@ -96,10 +113,11 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   },
   dbIops: function() {
     // Todo: Make this dynamic - for now we've arrived at this number through creative averaging.
-    return this.requestsPerSecond() * 6;
+    return (this.requestsPerSecond() * this.get('db_iops_per_request')).toFixed(2);
   },
   dbDisks: function() {
-    return Math.round(this.dbIops() / 150) * 2;
+    disk_pairs = Math.ceil(this.dbIops() / this.get('iops_per_disk_pair'));
+    return disk_pairs * 2;
   },
   dbReadsPerRequest: function() {
     return _.reduce(this.get('solutions').checked(), function(rpr, s) { return rpr + s.get('db').read }, 0);
@@ -118,7 +136,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   },
   webServers: function() {
     servers     = new SugarCRM.Collections.Servers;
-    server_type = this.get('server_types').first();
+    server_type = this.webServerType() ;
     total_cpu   = this.get('web_cpu');
     server_cpu  = server_type.cpu_capacity() * 0.7;
     total_servers = total_cpu / server_cpu;
@@ -133,14 +151,24 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     return servers;
   },
   dbServers: function() {
-    
+    servers     = new SugarCRM.Collections.Servers;
+    server_type = this.dbServerType();
+    servers.add(new SugarCRM.Models.Server(server_type.toJSON()));
+    servers.add(new SugarCRM.Models.Server(server_type.toJSON()));
+    return servers;
+  },
+  dbServerType: function() {
+    return this.serverTypes().last();
+  },
+  webServerType: function() {
+    return this.serverTypes().first();
   },
   toTemplate: function() {
     // Turn everything into JSON
     json  = this.toJSON();
     // Replace the environments part so we have a select instead
-    json.environments     = this.get('environments').toHTMLSelect();
-    json.solution_matrix  = this.get('solutions').toHTML();
+    //json.environments     = this.get('environments').toHTMLSelect();
+    //json.solution_matrix  = this.get('solutions').toHTML();
     return json;
   },
   update: function(e) {

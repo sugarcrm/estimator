@@ -14,7 +14,7 @@ SugarCRM.Collections.Environments = Backbone.Collection.extend({
         },
         { make: "Dell", 
           model: "R710",
-          cpu: { cores: 12, clock: 2.26 }, ram: 32, 
+          cpu: { cores: 12, clock: 2.26 }, ram: 256, 
           storage: [
             { size: 146, iops: 100, quantity: 2 },
             { size: 300, iops: 100, quantity: 4 }

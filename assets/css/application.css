@@ -3,6 +3,87 @@
   margin-left: auto;
 }
 
+#parameters input {
+	height: 40px;
+	padding: 0 5px 0 7px;
+	font-size: 22px;
+}
+
+#parameters p {
+	margin-top: 3px;
+	word-wrap: break-word;
+	font-weight: bold;
+	font-size: 16px;
+	width: 85px;
+}
+
+#parameters li {
+	vertical-align: top;
+	display: inline-block;
+}
+
+#parameters {
+	padding-top: 10px;
+	border-bottom: 1px solid black;
+}
+
+#parameters input {
+	text-align: right; 
+}
+
+#topology {
+	margin-top: 50px;
+	padding: 10px 0 0 0;
+}
+
+#topology li {
+	display: inline-block;
+}
+
+#topology h1 {
+	font-size: 50px;
+	font-weight: bold;
+}
+
+#topology .server-details {
+	margin-left: 25px;
+	border-bottom: 1px solid #585858;
+	border-right: 1px solid #585858;
+	box-shadow: 3px 3px 2px 1px #ccc;
+}
+
+#topology .server-type {
+	font-size: 26px;
+	margin-left: 7px;
+	color: #909090;
+}
+
+#topology .category {
+	background-color: #ffffff;
+	font-weight: bold;
+}
+
+#topology .per-server {
+	background-color: #f0f0f0;
+}
+
+#topology .total {
+	background-color: #e0e0e0;
+}
+
+#topology .notes {
+	margin: 7px;
+}
+
+.border-left {
+	border-left: 1px solid black;
+	margin-left: -1px;
+}
+
 .calculation {
   font-size: 14px;
+}
+
+.bold {
+	font-weight: bold;
 }

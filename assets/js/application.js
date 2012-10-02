@@ -14,12 +14,12 @@ SugarCRM.Views.SugarCRM = Backbone.View.extend({
   render: function() {
     $(this.el).html(this.template({}));
     this.parametersView = new SugarCRM.Views.Parameters({ parameters: this.parameters, el: this.$('#parameters') });
-    this.calculatorView = new SugarCRM.Views.Calculator({ parameters: this.parameters, el: this.$('#calculations') });
+    //this.calculatorView = new SugarCRM.Views.Calculator({ parameters: this.parameters, el: this.$('#calculations') });
     this.topologyView   = new SugarCRM.Views.Topology({ parameters: this.parameters, el: this.$('#topology') });
 
     console.log("Calling Render!");
     this.parametersView.render();
-    this.calculatorView.render();
+    //this.calculatorView.render();
     this.topologyView.render();
   },
 })

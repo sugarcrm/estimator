@@ -5,10 +5,10 @@ SugarCRM.Views.Parameters = Backbone.View.extend({
   },
   updateFields: function() {
     // Update the selected drop down
-    $('#environment').val(this.parameters.environment().get('name'));
-    _.each(this.parameters.get('solutions').checked(), function(s){
-      $('#'+s.get('id')).prop('checked', s.get('checked'));
-    });
+    //$('#environment').val(this.parameters.environment().get('name'));
+    //_.each(this.parameters.get('solutions').checked(), function(s){
+    //  $('#'+s.get('id')).prop('checked', s.get('checked'));
+    //});
   },
   render: function() {
     // Compile the template

@@ -11,114 +11,35 @@
     </section>
 
     <script type="text/html" id="template-sugarcrm">
-      <div class="row">
-        <div class="span12">
-          <div class="row">
-            <!-- Parameters -->
-            <div class="span8">
-              <div id="parameters"></div>
-            </div>
-            <!-- Calculations -->
-            <div class="span4">
-              <div id="calculations"></div>
-            </div>  
-          </div>
-
-          <div class="row">
-            <div class="span12">
-              <!-- Topology -->
-              <div id="topology"></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
+      <!-- Parameters -->
+      <div id="parameters" class="row"></div>
+      <!-- Topology -->
+      <div id="topology" class="row"></div>
+      <!-- Calculations -->
+      <div id="calculations" class="row"></div>  
     </script>
+    
     <script type="text/html" id="template-parameters">
-    <div class="page-header">
-      <h2>Parameters</h2>
-    </div>
-
-    <div class="row">
-      <div class="span2">
-        <label class="text">Licensed Users</label>
-        <div class="input-append">
-          <input id="users" class="calculateable input-small" size="4" type="text" value=<%= users %>><span class="add-on"><i class="icon-user"></i></span>
-        </div>
+      <div class="span4">
+        <ul>
+          <li><input id="concurrentUsers" class="calculateable input-small" size="4" type="text" value=<%= concurrentUsers %>></li>
+          <li><p>Concurrent Users</p></li>
+        </ul>
       </div>
-      <div class="span2">
-        <label class="text">Concurrency</label>
-        <div class="input-append">
-          <input id="concurrency" class="calculateable input-small" size="4" type="text" value=<%= concurrency %>><span class="add-on">%</span>
-        </div>
-      </div> 
-
-      <div class="span2">
-        <label class="text">Database Records</label>
-        <div class="input-append">
-          <input id="records" class="calculateable input-small" size="4" type="text" value=<%= records %>><span class="add-on"><i class="icon-folder-close"></i></span>
-        </div>
+      <div class="span4">
+        <ul>
+          <li><input id="records" class="calculateable input-small" size="4" type="text" value=<%= records %>></li>
+          <li><p>Database Records</p></li>
+        </ul>
       </div>
-
-      <div class="span2">
-        <label>Environment</label>
-        <select id="environment" class="calculateable input-small">
-          <%= environments %>
-        </select>
+      <div class="span4">
+        <ul>
+          <li><input id="requestsPerSecond" class="calculateable input-small" size="4" type="text" value=<%= requests_per_second %> disabled></li>
+          <li><p>Reqs Per Second</p></li>
+        </ul>
       </div>
-    <!--  
-      <div class="span2">
-        <label>Operating System</label>
-        <select id="operatingSystem" class="calculateable input-small">
-          <option>Linux</option>
-          <option>Windows</option>
-        </select>
-      </div>
-      <div class="span2">
-        <label>Web Server</label>
-        <select id="webServer" class="calculateable input-small">
-          <option>Apache</option>
-          <option>IIS</option>
-        </select>
-      </div>
-      <div class="span2">
-        <label>Database</label>
-        <select id="dbServer" class="calculateable input-small">
-          <option>MySQL</option>
-          <option>Microsoft</option>
-          <option>Oracle</option>
-          <option>DB2</option>
-        </select>
-      </div>
-      <div class="span2">
-        <label>PHP Version</label>
-        <select id="dbServer" class="calculateable input-small">
-          <option>5.2</option>
-          <option>5.3</option>
-        </select>
-      </div>
-      -->
-    </div>
-
-    <div class="row">
-      <div class="span8">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Enabled</th>
-              <th>Solution</th>
-              <th>Web Requests / User</th>
-              <th>API Requests / User</th>
-              <th>DB Read/Write</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= solution_matrix %>
-          </tbody>
-        </table>
-      </div>
-    </div>
     </script>
+    
     <script type="text/html" id="template-calculations">
       <div class="page-header">
         <h2>Calculations</h2>                
@@ -160,7 +81,6 @@
             <%= monthly_bandwidth %> GB/month
           </p>
         </div>
-        
         <hr />
         <div class="span2">
           <label class="text">
@@ -236,38 +156,80 @@
         </div>
       </div>
     </script>
+
     <script type="text/html" id="template-topology">
-      <div class="page-header">
-        <h2>Runtime Environment</h2>
-      </div>
-      <div class="span5">
-        <h3>Web Servers</h3>
-        <div id="web-servers">
-          <table class="table table-condensed table-striped table-bordered">
+      <div class="span6 servers">
+        <ul>
+          <li><h1><%= web_servers.length %></h1></li>
+          <li><span class="server-type">Web Servers</span></li>
+        </ul>
+        <div class="server-details">
+          <table class="table table-condensed">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Make/Model</th>
-                <th>CPU</th>
-                <th>RAM</th>
-                <th>Storage</th>
-                <th>Price</th>
+                <th></th>
+                <th>Per Server</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
-              <%= web_servers %>
+              <tr>
+                <td class="category">CPU</td>
+                <td class="per-server"><%= web_servers[0].cpu.cores %> x <%= web_servers[0].cpu.clock %> GHz</td>
+                <td class="total"><%= web_cpu %> GHz</td>
+              </tr>
+              <tr>
+                <td class="category">RAM</td>
+                <td class="per-server"><%= web_servers[0].ram %> GB</td>
+                <td class="total"><%= web_ram %> GB</td>
+              </tr>
+              <tr>
+                <td class="category">Storage</td>
+                <td class="per-server"><%= web_disks %> x 146GB 10k RPM</td>
+                <td class="total"><%= web_iops %> IOPS</td>
+              </tr>
             </tbody>
           </table>
+          <span class="notes"><b>Notes:</b> RAID 1, GlusterFS for instance files</span>
         </div>
-
-
       </div>
-      <div class="span5">
-        <h3>Database Servers</h3>
-        
+      <div class="span6 servers">
+        <ul>
+          <li><h1><%= db_servers.length %></h1></li>
+          <li><span class="server-type">Database Servers</span></li>
+        </ul>
+        <div class="server-details">
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Per Server</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="category">CPU</td>
+                <td class="per-server"><%= db_servers[0].cpu.cores %> x <%= db_servers[0].cpu.clock %> GHz</td>
+                <td class="total"><%= db_cpu %> GHz</td>
+              </tr>
+              <tr>
+                <td class="category">RAM</td>
+                <td class="per-server"><%= db_servers[0].ram %> GB</td>
+                <td class="total"><%= db_ram %> GB</td>
+              </tr>
+              <tr>
+                <td class="category">Storage</td>
+                <td class="per-server"><%= db_disks %> x 500GB 10k RPM</td>
+                <td class="total"><%= db_iops %> IOPS</td>
+              </tr>
+            </tbody>
+          </table>
+          <span class="notes"><b>Notes:</b> RAID 10, Active/Active MySQL</span>
+        </div>
       </div>
-      
     </script>
+    
     <script type="text/html" id="template-solution-row">
       <tr>
         <td><input id="<%= id %>" class="solutions calculateable" type="checkbox"></td>
