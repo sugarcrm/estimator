@@ -12,7 +12,7 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       web_ram_per_request: 278,  // Web RAM / Request in MB
       web_iops_per_request: 1,
       web_io_cache_hit_rate: 0.99,
-      db_cpu_per_request: 0.4,   // DB CPU / Request in GHz
+      db_cpu_per_request: 0.1,   // DB CPU / Request in GHz
       db_ram_per_request: 384,   // Web RAM / Request in MB
       db_iops_per_request: 6,
       iops_per_disk_pair: 105,
