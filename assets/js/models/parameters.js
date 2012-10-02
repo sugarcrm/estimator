@@ -37,7 +37,9 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.set('web_server_type', this.webServerType, {silent: true});
     
     this.set('db_cpu', this.dbCpu(), {silent: true});
+    this.set('db_cores', this.dbCores(), {silent: true});
     this.set('db_ram', this.dbRam(), {silent: true});
+    this.set('db_ram_increments', this.dbRamIncrements(), {silent: true});    
     this.set('db_size', this.dbSize(), {silent: true});
     this.set('db_iops', this.dbIops(), {silent: true});
     this.set('db_disks', this.dbDisks(), {silent: true});    
@@ -102,6 +104,10 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     // TODO: revisit this calculation - it's wrong.
     return ((this.requestsPerSecond() * this.get('db_ram_per_request')) / 1024).toFixed(2);
   },
+  dbRamIncrements: function() {
+    rams = Math.ceil(this.dbRam() / 32);
+    return rams * 32;
+  },
   // Database Size in GB
   dbSize: function() {
     return ((this.get('average_record_size') * this.get('records') / 1024 / 1024)).toFixed(2);
@@ -118,6 +124,10 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   dbDisks: function() {
     disk_pairs = Math.ceil(this.dbIops() / this.get('iops_per_disk_pair'));
     return disk_pairs * 2;
+  },
+  dbCores: function() {
+    cores = Math.ceil(this.dbCpu() / this.dbServerType().get('cpu').clock);
+    return cores;
   },
   dbReadsPerRequest: function() {
     return _.reduce(this.get('solutions').checked(), function(rpr, s) { return rpr + s.get('db').read }, 0);

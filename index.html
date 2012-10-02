@@ -210,12 +210,12 @@
             <tbody>
               <tr>
                 <td class="category">CPU</td>
-                <td class="per-server"><%= db_servers[0].cpu.cores %> x <%= db_servers[0].cpu.clock %> GHz</td>
+                <td class="per-server"><%= db_cores %> x <%= db_servers[0].cpu.clock %> GHz</td>
                 <td class="total"><%= db_cpu %> GHz</td>
               </tr>
               <tr>
                 <td class="category">RAM</td>
-                <td class="per-server"><%= db_servers[0].ram %> GB</td>
+                <td class="per-server"><%= db_ram_increments %> GB</td>
                 <td class="total"><%= db_ram %> GB</td>
               </tr>
               <tr>
