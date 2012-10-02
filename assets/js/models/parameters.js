@@ -4,68 +4,11 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
       users:        1000,
       records:      1000000,
       concurrency:  50,
-      environments: new SugarCRM.Collections.Environments([
-        { name: "On-Site", selected: true,  
-          server_types: new SugarCRM.Collections.Servers([
-            { make: "Dell", 
-              model: "R610", 
-              cpu: { cores: 8, clock: 2.13 }, ram: 8, 
-              storage: [{ size: 146, iops: 100, quantity: 2 }],
-              price: 3414.00,
-            },
-            { make: "Dell", 
-              model: "R710",
-              cpu: { cores: 12, clock: 2.26 }, ram: 32, 
-              storage: [
-                { size: 146, iops: 100, quantity: 2 },
-                { size: 300, iops: 100, quantity: 4 }
-              ],
-              price: 6886.00,
-            },
-          ]),
-        },
-        { name: "Amazon",  selected: false, 
-          server_types: new SugarCRM.Collections.Servers([
-            { make: "Amazon", 
-              model: "m1.small",
-              cpu: { cores: 1, clock: 1.2 }, ram: 1.7,
-              storage: [
-                { size: 160, iops: 50, quantity: 1 },
-              ],
-              price: 0.50,
-            }
-          ]),
-        }
-      ]),
-      os: new SugarCRM.Collections.OperatingSystems([ 
-        { name: "Linux",   selected: true  }, 
-        { name: "Windows", selected: false } 
-      ]),
-      solutions:    new SugarCRM.Collections.Solutions([
-        { id: "sfa", 
-          name: "Sales Force Automation", 
-          checked: false, 
-          web: 0.0333, 
-          api: 0,
-          db: { read: 5, write: 1 },   
-        },
-        { id: "call_center", 
-          name: "Call Center",
-          checked: true,  
-          web: 0.0333, 
-          api: 0.2,
-          db: { read: 2, write: 1 },
-        },
-        { id: "marketing",
-          name: "Marketing Automation",
-          checked: false,
-          web: 0.0333,
-          api: 0.02,
-          db: { read: 1, write: 3 },
-        }
-      ]),
+      environments: new SugarCRM.Collections.Environments(),
+      operating_systems: new SugarCRM.Collections.OperatingSystems(),
+      solutions:    new SugarCRM.Collections.Solutions(),
       average_request_size: 50,  // Average request size in KB
-      average_record_size: 50,   // Average record size in KB
+      average_record_size: 25,   // Average record size in KB
       web_cpu_per_request: 0.5,  // Web CPU / Request in GHz
       web_ram_per_request: 278,  // Web RAM / Request in MB
       db_cpu_per_request: 0.4,   // DB CPU / Request in GHz
@@ -87,7 +30,11 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
     this.set('db_cpu', this.dbCpu(), {silent: true});
     this.set('db_ram', this.dbRam(), {silent: true});
     this.set('db_size', this.dbSize(), {silent: true});
+    this.set('db_iops', this.dbIops(), {silent: true});
+    this.set('db_disks', this.dbDisks(), {silent: true});    
     this.set('db_buffer_pool', this.dbBufferPool(), {silent: true});
+    this.set('db_reads_per_request', this.dbReadsPerRequest(), {silent: true});
+    this.set('db_writes_per_request', this.dbWritesPerRequest(), {silent: true}); 
     this.set('server_types', this.serverTypes(), {silent: true});
     this.set('web_servers', this.webServers(), {silent: true});
   },
@@ -133,8 +80,9 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   dbCpu: function() {
     return (this.requestsPerSecond() * this.get('db_cpu_per_request')).toFixed(2);
   },
-  // Peak DB RAM in Gigahertz
+  // Peak DB RAM in Gigabytes
   dbRam: function() {
+    // TODO: revisit this calculation - it's wrong.
     return ((this.requestsPerSecond() * this.get('db_ram_per_request')) / 1024).toFixed(2);
   },
   // Database Size in GB
@@ -145,6 +93,25 @@ SugarCRM.Models.Parameters = Backbone.Model.extend({
   dbBufferPool: function() {
     dbSize = parseFloat(this.dbSize());
     return (dbSize + (dbSize * 0.2)).toFixed(2);
+  },
+  dbIops: function() {
+    // Todo: Make this dynamic - for now we've arrived at this number through creative averaging.
+    return this.requestsPerSecond() * 6;
+  },
+  dbDisks: function() {
+    return Math.round(this.dbIops() / 150) * 2;
+  },
+  dbReadsPerRequest: function() {
+    return _.reduce(this.get('solutions').checked(), function(rpr, s) { return rpr + s.get('db').read }, 0);
+  },
+  dbWritesPerRequest: function() {
+    return _.reduce(this.get('solutions').checked(), function(wpr, s) { return wpr + s.get('db').write }, 0);
+  },
+  dbReadsPerSecond: function() {
+    return this.dbReadsPerRequest() * this.requestsPerSecond();
+  },
+  dbWritesPerSecond: function() {
+    return this.dbWritesPerRequest() * this.requestsPerSecond();
   },
   serverTypes: function() {
     return this.environment().get('server_types');

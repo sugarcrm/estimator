@@ -66,6 +66,7 @@
           <%= environments %>
         </select>
       </div>
+    <!--  
       <div class="span2">
         <label>Operating System</label>
         <select id="operatingSystem" class="calculateable input-small">
@@ -96,7 +97,7 @@
           <option>5.3</option>
         </select>
       </div>
-
+      -->
     </div>
 
     <div class="row">
@@ -215,29 +216,57 @@
             <%= db_buffer_pool %> GB
           </p>
         </div>
+        <div class="span2">
+          <label class="text">
+            DB IOPS
+          </label>
+          <p id="dbIops" class="calculation">
+            <i class="icon-tasks"></i>
+            <%= db_iops %> IOPS
+          </p>
+        </div>
+        <div class="span2">
+          <label class="text">
+            DB Disks
+          </label>
+          <p id="dbDisks" class="calculation">
+            <i class="icon-tasks"></i>
+            <%= db_disks %> disks
+          </p>
+        </div>
       </div>
     </script>
     <script type="text/html" id="template-topology">
       <div class="page-header">
         <h2>Runtime Environment</h2>
       </div>
-      <div id="web-servers">
-        <table class="table table-condensed table-striped table-bordered">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Make/Model</th>
-              <th>CPU</th>
-              <th>RAM</th>
-              <th>Storage</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= web_servers %>
-          </tbody>
-        </table>
+      <div class="span5">
+        <h3>Web Servers</h3>
+        <div id="web-servers">
+          <table class="table table-condensed table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Make/Model</th>
+                <th>CPU</th>
+                <th>RAM</th>
+                <th>Storage</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= web_servers %>
+            </tbody>
+          </table>
+        </div>
+
+
       </div>
+      <div class="span5">
+        <h3>Database Servers</h3>
+        
+      </div>
+      
     </script>
     <script type="text/html" id="template-solution-row">
       <tr>
@@ -254,7 +283,7 @@
         <td><%= make + " " + model %></td>
         <td><%= cpu.cores + " x " + cpu.clock %> GHz</td>
         <td><%= ram %> GB</td>
-        <td></td>
+        <td><%= _.reduce(storage, function(h, s){ return h + s.quantity + " x " + s.size + "GB" }, '') %></td>
         <td>$ <%= price %></td>
       </tr>
     </script>
@@ -273,6 +302,9 @@
     <script src="assets/js/models/solutions.js"></script>
     <script src="assets/js/models/parameters.js"></script>
     <script src="assets/js/models/servers.js"></script>
+    <script src="assets/js/views/parameters.js"></script>
+    <script src="assets/js/views/calculator.js"></script>
+    <script src="assets/js/views/topology.js"></script>
     <script src="assets/js/application.js"></script>
     
   </body>

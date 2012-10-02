@@ -3,6 +3,10 @@ SugarCRM.Models.OperatingSystem = Backbone.Model.extend()
 SugarCRM.Collections.OperatingSystems = Backbone.Collection.extend({
   model: SugarCRM.Models.OperatingSystem,
 
+  initialize: function() {
+      this.add({ name: "Linux",   selected: true  },{silent: true});
+      this.add({ name: "Windows", selected: false },{silent: true});
+  },
   toHTMLSelect: function() {
     template = _.template('<option value="<%= name %>"><%= name %></option>');
     return this.reduce(function(html, e) { 

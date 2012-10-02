@@ -2,6 +2,32 @@ SugarCRM.Models.Solution = Backbone.Model.extend()
 
 SugarCRM.Collections.Solutions = Backbone.Collection.extend({
   model: SugarCRM.Models.Solution,
+  initialize: function() {
+    this.add({ 
+      id: "sfa", 
+      name: "Sales Force Automation", 
+      checked: false, 
+      web: 0.0333, 
+      api: 0,
+      db: { read: 25, write: 1 },   
+    }, {silent: true});
+    this.add({ 
+      id: "call_center", 
+      name: "Call Center",
+      checked: true,  
+      web: 0.0333, 
+      api: 0.2,
+      db: { read: 25, write: 1 },
+    }, {silent: true});
+    this.add({ 
+      id: "marketing",
+      name: "Marketing Automation",
+      checked: false,
+      web: 0.0333,
+      api: 0.02,
+      db: { read: 25, write: 3 },
+    }, {silent: true});
+  },
   toHTML: function() {
     template = _.template($('#template-solution-row').html());
     return this.reduce(function(html, e) {
