@@ -75,6 +75,10 @@
 	margin: 7px;
 }
 
+#calculations {
+	margin-top: 50px;
+}
+
 .border-left {
 	border-left: 1px solid black;
 	margin-left: -1px;
